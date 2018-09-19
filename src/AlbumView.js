@@ -10,6 +10,7 @@ export default class extends React.Component {
     constructor(props) {
         super(props);
         this.data = props.navigation.state.params;
+        this.data.maxSize = typeof this.data.maxSize !== 'number' ? 1 : this.data.maxSize;
         this.state = {
             selectedItems: [...this.data.selectedItems],
         };
@@ -20,9 +21,9 @@ export default class extends React.Component {
     };
 
     _onDeletePageFinish = (data) => {
-        this.setState({
-            selectedItems: [...data],
-        });
+        const selectedItems = this.state.selectedItems
+            .filter(item => data.indexOf(item.uri) >= 0);
+        this.setState({selectedItems});
     };
 
     _clickBack = () => {
@@ -46,7 +47,7 @@ export default class extends React.Component {
     _clickPreview = () => {
         if (this.state.selectedItems.length > 0) {
             this.props.navigation.navigate(PageKeys.preview, {
-                images: this.state.selectedItems,
+                images: this.state.selectedItems.map(item => item.uri),
                 callback: this._onDeletePageFinish,
             });
         }
@@ -84,7 +85,10 @@ export default class extends React.Component {
                     resizeMode='cover'
                 />
                 {hasIcon && (
-                    <TouchableOpacity onPress={this._clickCell.bind(this, item)} style={styles.selecttouch}>
+                    <TouchableOpacity
+                        onPress={this._clickCell.bind(this, item)}
+                        style={styles.selecttouch}
+                    >
                         <View style={styles.selectcontainer}>
                             <View style={[styles.selecticon, {backgroundColor}]}>
                                 {isSelected && (
@@ -107,7 +111,7 @@ export default class extends React.Component {
                 style={styles.list}
                 renderItem={this._renderItem}
                 data={this.data.photos}
-                keyExtractor={item => item}
+                keyExtractor={item => item.uri}
                 numColumns={this.column}
                 extraData={this.state}
             />
@@ -115,6 +119,7 @@ export default class extends React.Component {
     };
 
     _renderBottomView = () => {
+        const okButton = '确定 (' + this.state.selectedItems.length + '/' + this.data.maxSize + ')';
         return (
             <View style={styles.bottom}>
                 <TouchableOpacity onPress={this._clickPreview}>
@@ -124,7 +129,7 @@ export default class extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this._clickOk}>
                     <Text style={styles.okButton}>
-                        {'确定 (' + this.state.selectedItems.length + '/' + this.data.maxSize + ')'}
+                        {okButton}
                     </Text>
                 </TouchableOpacity>
             </View>

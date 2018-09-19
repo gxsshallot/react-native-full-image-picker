@@ -24,7 +24,7 @@
         "react-native-camera": "^1.2.0",
         "react-native-iphone-x-helper": "^1.1.0",
         "react-native-pure-navigation-bar": "^1.2.6",
-        "react-native-general-toast": "^1.0.0",
+        "react-native-general-siblings": "^1.0.0",
         "react-native-video": "^3.2.1"
     }
 }

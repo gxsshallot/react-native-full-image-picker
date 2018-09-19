@@ -12,12 +12,14 @@
   "author": "Xiaosong Gao",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-react-native": "4.0.0"
+    "metro-react-native-babel-preset": "0.45.3"
   },
   "dependencies": {
-    "react": "16.2.0",
-    "react-native": "0.52.2",
+    "prop-types": "15.6.2",
+    "react": "16.5.0",
+    "react-native": "0.57.0",
     "react-native-full-image-picker": "../",
-    "react-native-pure-navigation-bar": "^1.2.6"
+    "react-native-pure-navigation-bar": "^1.2.6",
+    "react-navigation": "^2.14.2"
   }
 }

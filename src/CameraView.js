@@ -1,10 +1,10 @@
 import React from "react";
-import { Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Alert, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import Toast from 'react-native-general-toast';
 import { STATUSBAR_HEIGHT } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
 import PageKeys from './PageKeys';
+import PhotoPageTypes from './PageTypes';
 
 export default class extends React.Component {
     constructor(props) {
@@ -45,7 +45,7 @@ export default class extends React.Component {
             }
             if (this.maxSize > 1) {
                 if (this.state.data.length >= this.maxSize) {
-                    Toast.show('可拍摄照片已达到上限');
+                    Alert.alert('', '可拍摄照片已达到上限');
                 } else {
                     this.setState({
                         data: [...this.state.data, newPath],
@@ -73,18 +73,23 @@ export default class extends React.Component {
     };
 
     _startRecording = async () => {
-        const {uri: path} = await this.camera.recordAsync();
-        let newPath = path;
-        if (Platform.OS === 'ios') {
-            if (newPath.startsWith('file://')) {
-                newPath = newPath.substring(7);
+        try {
+            const {uri: path} = await this.camera.recordAsync();
+            let newPath = path;
+            if (Platform.OS === 'ios') {
+                if (newPath.startsWith('file://')) {
+                    newPath = newPath.substring(7);
+                }
             }
+            this.setState({
+                data: [newPath],
+                isRecording: false,
+                isPreview: true,
+            });
         }
-        this.setState({
-            data: [newPath],
-            isRecording: false,
-            isPreview: true,
-        });
+        catch (e) {
+            Alert.alert('', e.message);
+        }
     };
 
     _clickSwitchSide = () => {
@@ -163,7 +168,10 @@ export default class extends React.Component {
 
     _renderOkButton = (text) => {
         return (
-            <TouchableOpacity onPress={() => this._onFinish(this.state.data)} style={styles.buttontouch}>
+            <TouchableOpacity
+                onPress={() => this._onFinish(this.state.data)}
+                style={styles.buttontouch}
+            >
                 <Text style={styles.buttontext}>
                     {text}
                 </Text>
@@ -173,15 +181,17 @@ export default class extends React.Component {
 
     _renderTakePhotoButton = () => {
         const left = (Dimensions.get('window').width - 84) / 2;
-        const {captureMode} = this.props.screenProps;
-        const btnIcon = this.state.isRecording ? require('./images/video_recording.png') : require('./images/shutter.png');
+        const {type} = this.data;
+        const btnIcon = this.state.isRecording ?
+            require('./images/video_recording.png') :
+            require('./images/shutter.png');
         return (
             <TouchableOpacity
-                onPress={captureMode === 'video' ? this._clickRecordVideo : this._clickTakePicture}
+                onPress={type === PhotoPageTypes.video ? this._clickRecordVideo : this._clickTakePicture}
                 style={[styles.takephotoview, {left}]}
             >
                 <Image
-                    style={[styles.takephotoimage]}
+                    style={styles.takephotoimage}
                     source={btnIcon}
                 />
             </TouchableOpacity>
@@ -189,12 +199,12 @@ export default class extends React.Component {
     };
 
     _renderBottomView = () => {
-        const {captureMode} = this.props.screenProps;
+        const {type} = this.data;
         const isMulti = this.maxSize > 1;
         const hasPhoto = this.state.data.length > 0;
         const inPreview = this.state.isPreview;
         const isRecording = this.state.isRecording;
-        const previewBtnName = captureMode === 'video' ? '使用视频' : '使用照片';
+        const previewBtnName = type === PhotoPageTypes.video ? '使用视频' : '使用照片';
         return (
             <View style={styles.bottom}>
                 {isMulti && hasPhoto ? this._renderPreviewButton() : !isRecording && this._renderCancelButton()}
@@ -205,12 +215,12 @@ export default class extends React.Component {
     };
 
     _renderPreviewView = () => {
-        const {captureMode} = this.props.screenProps;
+        const {type} = this.data;
         const {width, height} = Dimensions.get('window');
         return (
             <View style={{width, height}}>
                 {
-                    captureMode === 'video' ?
+                    type === PhotoPageTypes.video ?
                         <Video
                             source={{uri: this.state.data[0]}}
                             ref={(ref) => {
