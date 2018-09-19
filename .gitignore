@@ -1,0 +1,26 @@
+# OSX
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+xcuserdata
+*.xccheckout
+DerivedData
+project.xcworkspace
+
+# Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+bin/
+gen/
+out/
+
+# node.js
+node_modules/
+yarn-error.log
+main.jsbundle*

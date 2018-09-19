@@ -1,0 +1,30 @@
+{
+    "name": "react-native-full-image-picker",
+    "version": "1.0.0",
+    "private": false,
+    "description": "",
+    "main": "src/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gaoxiaosong/react-native-full-image-picker.git"
+    },
+    "keywords": [
+        "React-Native",
+        "ImagePicker",
+        "VideoRecord"
+    ],
+    "author": "Xiaosong Gao",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/gaoxiaosong/react-native-full-image-picker/issues",
+        "email": "gaoxiaosong06@gmail.com"
+    },
+    "homepage": "https://github.com/gaoxiaosong/react-native-full-image-picker#readme",
+    "dependencies": {
+        "react-native-camera": "^1.2.0",
+        "react-native-iphone-x-helper": "^1.1.0",
+        "react-native-pure-navigation-bar": "^1.2.6",
+        "react-native-general-toast": "^1.0.0",
+        "react-native-video": "^3.2.1"
+    }
+}
