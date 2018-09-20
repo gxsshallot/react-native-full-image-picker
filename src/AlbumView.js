@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Alert, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import NaviBar from 'react-native-pure-navigation-bar';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import PageKeys from './PageKeys';
@@ -37,6 +37,8 @@ export default class extends React.Component {
             this.setState({
                 selectedItems: [...selectedItems]
             });
+        } else if (this.state.selectedItems.length >= this.data.maxSize) {
+            Alert.alert('', '最大只能选择' + this.data.maxSize + '张照片');
         } else {
             this.setState({
                 selectedItems: [...this.state.selectedItems, itemuri]
@@ -77,18 +79,15 @@ export default class extends React.Component {
         const backgroundColor = isSelected ? '#e15151' : 'transparent';
         const hasIcon = isSelected || this.state.selectedItems.length < this.data.maxSize;
         return (
-            <View style={{padding: 1}}>
-                <Image
-                    key={index}
-                    source={{uri: item.uri}}
-                    style={{width: edge, height: edge, overflow: 'hidden'}}
-                    resizeMode='cover'
-                />
-                {hasIcon && (
-                    <TouchableOpacity
-                        onPress={this._clickCell.bind(this, item)}
-                        style={styles.selecttouch}
-                    >
+            <TouchableOpacity onPress={this._clickCell.bind(this, item)}>
+                <View style={{padding: 1}}>
+                    <Image
+                        key={index}
+                        source={{uri: item.uri}}
+                        style={{width: edge, height: edge, overflow: 'hidden'}}
+                        resizeMode='cover'
+                    />
+                    {hasIcon && (
                         <View style={styles.selectcontainer}>
                             <View style={[styles.selecticon, {backgroundColor}]}>
                                 {isSelected && (
@@ -99,9 +98,9 @@ export default class extends React.Component {
                                 )}
                             </View>
                         </View>
-                    </TouchableOpacity>
-                )}
-            </View>
+                    )}
+                </View>
+            </TouchableOpacity>
         );
     };
 
@@ -119,12 +118,13 @@ export default class extends React.Component {
     };
 
     _renderBottomView = () => {
+        const previewButton = this.state.selectedItems.length > 0 ? '预览' : '';
         const okButton = '确定 (' + this.state.selectedItems.length + '/' + this.data.maxSize + ')';
         return (
             <View style={styles.bottom}>
                 <TouchableOpacity onPress={this._clickPreview}>
                     <Text style={styles.previewButton}>
-                        预览
+                        {previewButton}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this._clickOk}>
@@ -162,6 +162,9 @@ const styles = StyleSheet.create({
         right: 4,
     },
     selectcontainer: {
+        position: 'absolute',
+        top: 4,
+        right: 4,
         width: 30,
         height: 30,
         justifyContent: 'flex-start',

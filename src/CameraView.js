@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Alert, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { STATUSBAR_HEIGHT } from 'react-native-pure-navigation-bar';
@@ -11,11 +11,13 @@ export default class extends React.Component {
         super(props);
         this.data = props.screenProps;
         this.maxSize = this.data.maxSize === undefined ? 1 : this.data.maxSize;
+        const type = this.data.sideType !== undefined ? this.data.sideType : RNCamera.Constants.Type.back;
+        const mode = this.data.flashMode !== undefined ? this.data.flashMode : RNCamera.Constants.FlashMode.off;
         this.state = {
             data: [],
             isPreview: false,
-            sidetype: RNCamera.Constants.Type.back,
-            flashmode: RNCamera.Constants.FlashMode.auto,
+            sidetype: type,
+            flashmode: mode,
             isRecording: false,
         };
     }
@@ -67,29 +69,26 @@ export default class extends React.Component {
             } else {
                 this.setState({
                     isRecording: true,
-                },this._startRecording);
+                }, this._startRecording);
             }
         }
     };
 
-    _startRecording = async () => {
-        try {
-            const {uri: path} = await this.camera.recordAsync();
-            let newPath = path;
-            if (Platform.OS === 'ios') {
-                if (newPath.startsWith('file://')) {
-                    newPath = newPath.substring(7);
+    _startRecording = () => {
+        this.camera.recordAsync()
+            .then(({uri: path}) => {
+                let newPath = path;
+                if (Platform.OS === 'ios') {
+                    if (newPath.startsWith('file://')) {
+                        newPath = newPath.substring(7);
+                    }
                 }
-            }
-            this.setState({
-                data: [newPath],
-                isRecording: false,
-                isPreview: true,
+                this.setState({
+                    data: [newPath],
+                    isRecording: false,
+                    isPreview: true,
+                });
             });
-        }
-        catch (e) {
-            Alert.alert('', e.message);
-        }
     };
 
     _clickSwitchSide = () => {
@@ -223,10 +222,8 @@ export default class extends React.Component {
                     type === PhotoPageTypes.video ?
                         <Video
                             source={{uri: this.state.data[0]}}
-                            ref={(ref) => {
-                                this.player = ref;
-                            }}
-                            style={{width, height}}
+                            ref={(ref) => this.player = ref}
+                            style={{width, height, backgroundColor: 'black'}}
                         /> :
                         <Image
                             resizeMode='contain'
@@ -238,6 +235,18 @@ export default class extends React.Component {
         );
     };
 
+    _renderCameraView = () => {
+        return (
+            <RNCamera
+                ref={cam => this.camera = cam}
+                type={this.state.sidetype}
+                flashMode={this.state.flashmode}
+                style={styles.preview}
+                fixOrientation={true}
+            />
+        );
+    };
+
     render() {
         const {width, height} = Dimensions.get('window');
         return (
@@ -246,15 +255,7 @@ export default class extends React.Component {
                     backgroundColor="transparent"
                     barStyle="light-content"
                 />
-                {!this.state.isPreview ? (
-                    <RNCamera
-                        ref={cam => this.camera = cam}
-                        type={this.state.sidetype}
-                        flashMode={this.state.flashmode}
-                        style={styles.preview}
-                        fixOrientation={true}
-                    />
-                ) : this._renderPreviewView()}
+                {!this.state.isPreview ? this._renderCameraView() : this._renderPreviewView()}
                 {this._renderTopView()}
                 {this._renderBottomView()}
             </View>
@@ -278,6 +279,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        backgroundColor: 'transparent',
     },
     flashview: {
         marginLeft: 5,
@@ -309,6 +311,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        backgroundColor: 'transparent',
     },
     takephotoview: {
         position: 'absolute',

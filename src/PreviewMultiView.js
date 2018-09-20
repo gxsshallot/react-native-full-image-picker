@@ -74,7 +74,7 @@ export default class extends React.Component {
             <View style={{width, height}}>
                 <StatusBar
                     backgroundColor="transparent"
-                    barStyle="light-content"
+                    barStyle="dark-content"
                 />
                 <NaviBar
                     title={title}

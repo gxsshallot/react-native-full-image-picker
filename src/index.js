@@ -5,7 +5,9 @@ import PhotoModalPage from './PhotoModalPage';
 
 /**
  * --OPTIONS--
- * maxSize: number. Camera or Video.
+ * maxSize?: number. Camera or Video.
+ * sideType?: RNCamera.Constants.Type. Camera or Video.
+ * flashMode?: RNCamera.Constants.FlashMode. Camera or Video.
  * callback: (data: any[]) => void. Donot use Alert.
  */
 
