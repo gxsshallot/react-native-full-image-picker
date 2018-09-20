@@ -20,7 +20,7 @@ npm install --save react-native-full-image-picker
 
 需要安装如下库:
 
-* [CameraRoll](https://facebook.github.io/react-native/docs/cameraroll)
+* [CameraRoll](https://reactnative.cn/docs/cameraroll/)
 * [react-native-camera](https://github.com/react-native-community/react-native-camera)
 * [react-native-video](https://github.com/react-native-community/react-native-video)
 
@@ -33,6 +33,19 @@ npm install --save react-native-full-image-picker
 ```jsx
 import * as ImagePicker from 'react-native-full-image-picker';
 ```
+
+它有三个方法:
+
+* `ImagePicker.getCamera(options)`: 拍照.
+* `ImagePicker.getVideo(options)`: 录像.
+* `ImagePicker.getAlbum(options)`: 从相册选择.
+
+`options`是一个有如下属性的对象:
+
+* `callback: (data: any[]) => void`: 返回照片或视频数组的回调方法. 不要在其中使用`Alert`.
+* `maxSize?: number`: 照片数量的最大值. 在拍照或录像时生效.
+* `sideType?: RNCamera.Constants.Type`: 相机摄像头的类型, 后置或前置. 在拍照或录像时生效.
+* `flashMode?: RNCamera.Constants.FlashMode`: 闪光灯模式. 在拍照或录像时生效.
 
 ## 样例工程
 

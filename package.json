@@ -2,7 +2,7 @@
     "name": "react-native-full-image-picker",
     "version": "1.0.0",
     "private": false,
-    "description": "",
+    "description": "Support taking photo, video recording or selecting from photo library.",
     "main": "src/index.js",
     "repository": {
         "type": "git",

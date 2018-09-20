@@ -36,16 +36,29 @@ First import in the file:
 import * as ImagePicker from 'react-native-full-image-picker';
 ```
 
+It has three method:
+
+* `ImagePicker.getCamera(options)`: Take photo.
+* `ImagePicker.getVideo(options)`: Video recording.
+* `ImagePicker.getAlbum(options)`: Select from photo library.
+
+`options` is a object with these settings:
+
+* `callback: (data: any[]) => void`: Callback method with photo or video array. Do not use `Alert` in it.
+* `maxSize?: number`: The maximum number of photo count. Valid in camera or video.
+* `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
+* `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
+
 ## Example Project
 
 You can open the example project by following steps:
 
 1. `cd example`.
-1. Use `yarn` or `npm install` to install the modules.
-1. Run `npm run bundle:ios` or `npm run bundle:android` to bundle the package.
-1. Run `npm start` in a seperate terminal.
-1. Use `Xcode` or `Android Studio` to open the project in `example/ios` or `example/android`.
-1. Run the project.
+2. Use `yarn` or `npm install` to install the modules.
+3. Run `npm run bundle:ios` or `npm run bundle:android` to bundle the package.
+4. Run `npm start` in a seperate terminal.
+5. Use `Xcode` or `Android Studio` to open the project in `example/ios` or `example/android`.
+6. Run the project.
 
 ## Reference
 
