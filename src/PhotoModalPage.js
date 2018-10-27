@@ -8,6 +8,18 @@ import AlbumView from './AlbumView';
 import PreviewMultiView from './PreviewMultiView';
 
 export default class extends React.PureComponent {
+    static defaultProps = {
+        okLabel: 'OK',
+        cancelLabel: 'Cancel',
+        deleteLabel: 'Delete',
+        useVideoLabel: 'Use Video',
+        usePhotoLabel: 'Use Photo',
+        previewLabel: 'Preview',
+        choosePhotoTitle: 'Choose Photo',
+        maxSizeChooseAlert: (number) => 'You can only choose ' + number + ' photos at most',
+        maxSizeTakeAlert: (number) => 'You can only take ' + number + ' photos at most',
+    };
+
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this._clickBack);
     }
@@ -18,7 +30,7 @@ export default class extends React.PureComponent {
 
     render() {
         const callback = (data) => {
-            this.props.options.callback && this.props.options.callback(data);
+            this.props.callback && this.props.callback(data);
             InteractionManager.runAfterInteractions(() => {
                 this.props.onDestroy && this.props.onDestroy();
             });
@@ -54,7 +66,7 @@ export default class extends React.PureComponent {
             {
                 initialRouteName: this.props.initialRouteName,
                 initialRouteParams: {
-                    ...this.props.options,
+                    ...this.props,
                     callback: callback,
                 },
                 headerMode: 'none',

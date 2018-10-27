@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "bundle:ios": "node ./node_modules/react-native/local-cli/cli.js bundle --platform ios --entry-file example.js --bundle-output ios/main.jsbundle --dev=false --verbose",
-    "bundle:android": "mkdir android/app/src/main/assets; node ./node_modules/react-native/local-cli/cli.js bundle --platform android --entry-file example.js --bundle-output android/app/src/main/assets/main.jsbundle --assets-dest android/app/src/main/res/ --dev=false --verbose"
+    "bundle:ios": "node ./node_modules/react-native/local-cli/cli.js bundle --platform ios --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios/ --dev=false --verbose",
+    "bundle:android": "mkdir android/app/src/main/assets; node ./node_modules/react-native/local-cli/cli.js bundle --platform android --entry-file index.js --bundle-output android/app/src/main/assets/main.jsbundle --assets-dest android/app/src/main/res/ --dev=false --verbose"
   },
   "author": "Xiaosong Gao",
   "license": "MIT",

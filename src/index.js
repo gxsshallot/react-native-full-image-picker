@@ -2,6 +2,10 @@ import React from 'react';
 import RootSiblings from 'react-native-general-siblings';
 import PageKeys from './PageKeys';
 import PhotoModalPage from './PhotoModalPage';
+import CameraView from './CameraView';
+import AlbumListView from './AlbumListView';
+import AlbumView from './AlbumView';
+import PreviewMultiView from './PreviewMultiView';
 
 /**
  * --OPTIONS--
@@ -24,11 +28,19 @@ function showImagePicker(initialRouteName, options) {
     sibling = new RootSiblings(
         <PhotoModalPage
             initialRouteName={initialRouteName}
-            options={options}
             onDestroy={() => {
                 sibling && sibling.destroy();
                 sibling = null;
             }}
+            {...options}
         />
     );
 }
+
+export {
+    PhotoModalPage,
+    CameraView,
+    PreviewMultiView,
+    AlbumListView,
+    AlbumView,
+};

@@ -65,9 +65,9 @@ export default class extends React.PureComponent {
         return (
             <View style={styles.view}>
                 <NaviBar
-                    title={'选择照片'}
+                    title={this.props.choosePhotoTitle}
                     leftElement={[]}
-                    rightElement={'取消'}
+                    rightElement={this.props.cancelLabel}
                     onRight={this._clickCancel}
                 />
                 <FlatList

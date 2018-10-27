@@ -34,7 +34,7 @@ export default class extends React.PureComponent {
                 <NaviBar
                     title={title}
                     onLeft={() => this._clickLeft(this.state.images)}
-                    rightElement={'删除'}
+                    rightElement={this.props.deleteLabel}
                     onRight={this._clickDelete}
                 />
                 <ScrollView

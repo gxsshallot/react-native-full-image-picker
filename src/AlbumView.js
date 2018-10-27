@@ -30,7 +30,7 @@ export default class extends React.PureComponent {
                 <NaviBar
                     title={this.props.groupName}
                     onLeft={this._clickBack}
-                    rightElement={'取消'}
+                    rightElement={this.props.cancelLabel}
                     onRight={this._onFinish.bind(this, [])}
                 />
                 <FlatList
@@ -80,8 +80,8 @@ export default class extends React.PureComponent {
     };
 
     _renderBottomView = () => {
-        const previewButton = this.state.selectedItems.length > 0 ? '预览' : '';
-        const okButton = '确定 (' + this.state.selectedItems.length + '/' + this.props.maxSize + ')';
+        const previewButton = this.state.selectedItems.length > 0 ? this.props.previewLabel : '';
+        const okButton = this.props.okLabel + ' (' + this.state.selectedItems.length + '/' + this.props.maxSize + ')';
         const safeArea = getSafeAreaInset();
         return (
             <View style={[styles.bottom, {marginBottom: safeArea.bottom}]}>
@@ -121,7 +121,7 @@ export default class extends React.PureComponent {
                 selectedItems: [...selectedItems]
             });
         } else if (this.state.selectedItems.length >= this.props.maxSize) {
-            Alert.alert('', '最大只能选择' + this.props.maxSize + '张照片');
+            Alert.alert('', this.props.maxSizeChooseAlert(this.props.maxSize));
         } else {
             this.setState({
                 selectedItems: [...this.state.selectedItems, itemuri]
@@ -132,6 +132,7 @@ export default class extends React.PureComponent {
     _clickPreview = () => {
         if (this.state.selectedItems.length > 0) {
             this.props.navigation.navigate(PageKeys.preview, {
+                ...this.props,
                 images: this.state.selectedItems.map(item => item.uri),
                 callback: this._onDeletePageFinish,
             });

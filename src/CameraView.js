@@ -118,12 +118,12 @@ export default class extends React.PureComponent {
         const hasPhoto = this.state.data.length > 0;
         const inPreview = this.state.isPreview;
         const isRecording = this.state.isRecording;
-        const buttonName = this.props.isVideo ? '使用视频' : '使用照片';
+        const buttonName = this.props.isVideo ? this.props.useVideoLabel : this.props.usePhotoLabel;
         return (
             <View style={[styles.bottom, style]}>
-                {isMulti && hasPhoto ? this._renderPreviewButton() : !isRecording && this._renderBottomButton('取消', this._clickCancel)}
+                {isMulti && hasPhoto ? this._renderPreviewButton() : !isRecording && this._renderBottomButton(this.props.cancelLabel, this._clickCancel)}
                 {!inPreview && this._renderTakePhotoButton()}
-                {isMulti ? hasPhoto && this._renderBottomButton('确定', this._clickOK) : inPreview && this._renderBottomButton(buttonName, this._clickOK)}
+                {isMulti ? hasPhoto && this._renderBottomButton(this.props.okLabel, this._clickOK) : inPreview && this._renderBottomButton(buttonName, this._clickOK)}
             </View>
         );
     };
@@ -196,7 +196,7 @@ export default class extends React.PureComponent {
             }
             if (this.props.maxSize > 1) {
                 if (this.state.data.length >= this.props.maxSize) {
-                    Alert.alert('', '可拍摄照片已达到上限');
+                    Alert.alert('', this.props.maxSizeTakeAlert(this.props.maxSize));
                 } else {
                     this.setState({
                         data: [...this.state.data, newPath],
@@ -251,11 +251,12 @@ export default class extends React.PureComponent {
     };
 
     _clickFlashMode = () => {
-        // TODO 闪光灯
+        // TODO FlashMode
     };
 
     _clickPreview = () => {
         this.props.navigation.navigate(PageKeys.preview, {
+            ...this.props,
             images: this.state.data,
             callback: this._onDeletePageFinish,
         });
