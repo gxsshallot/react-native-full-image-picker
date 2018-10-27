@@ -1,23 +1,106 @@
 import React from 'react';
 import { Alert, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
-import NaviBar from 'react-native-pure-navigation-bar';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
+import NaviBar, { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import PageKeys from './PageKeys';
 
-export default class extends React.Component {
-    column = 3;
-
+export default class extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.data = props.navigation.state.params;
-        this.data.maxSize = typeof this.data.maxSize !== 'number' ? 1 : this.data.maxSize;
         this.state = {
-            selectedItems: [...this.data.selectedItems],
+            selectedItems: [...this.props.selectedItems],
         };
     }
 
+    componentDidMount() {
+        Dimensions.addEventListener('change', this._onWindowChanged);
+    }
+
+    componentWillUnmount() {
+        Dimensions.removeEventListener('change', this._onWindowChanged);
+    }
+
+    render() {
+        const safeArea = getSafeAreaInset();
+        const style = {
+            paddingLeft: safeArea.left,
+            paddingRight: safeArea.right,
+        };
+        return (
+            <View style={styles.view}>
+                <NaviBar
+                    title={this.props.groupName}
+                    onLeft={this._clickBack}
+                    rightElement={'取消'}
+                    onRight={this._onFinish.bind(this, [])}
+                />
+                <FlatList
+                    key={this._column()}
+                    style={[styles.list, style]}
+                    renderItem={this._renderItem}
+                    data={this.props.photos}
+                    keyExtractor={item => item.uri}
+                    numColumns={this._column()}
+                    extraData={this.state}
+                />
+                {this._renderBottomView()}
+            </View>
+        );
+    }
+
+    _renderItem = ({item, index}) => {
+        const safeArea = getSafeAreaInset();
+        const edge = (Dimensions.get('window').width - safeArea.left - safeArea.right) / this._column() - 2;
+        const isSelected = this.state.selectedItems.some(obj => obj.uri === item.uri);
+        const backgroundColor = isSelected ? '#e15151' : 'transparent';
+        const hasIcon = isSelected || this.state.selectedItems.length < this.props.maxSize;
+        return (
+            <TouchableOpacity onPress={this._clickCell.bind(this, item)}>
+                <View style={{padding: 1}}>
+                    <Image
+                        key={index}
+                        source={{uri: item.uri}}
+                        style={{width: edge, height: edge, overflow: 'hidden'}}
+                        resizeMode='cover'
+                    />
+                    {hasIcon && (
+                        <View style={styles.selectView}>
+                            <View style={[styles.selectIcon, {backgroundColor}]}>
+                                {isSelected && (
+                                    <Image
+                                        source={require('./images/check_box.png')}
+                                        style={styles.selectedIcon}
+                                    />
+                                )}
+                            </View>
+                        </View>
+                    )}
+                </View>
+            </TouchableOpacity>
+        );
+    };
+
+    _renderBottomView = () => {
+        const previewButton = this.state.selectedItems.length > 0 ? '预览' : '';
+        const okButton = '确定 (' + this.state.selectedItems.length + '/' + this.props.maxSize + ')';
+        const safeArea = getSafeAreaInset();
+        return (
+            <View style={[styles.bottom, {marginBottom: safeArea.bottom}]}>
+                <TouchableOpacity onPress={this._clickPreview}>
+                    <Text style={styles.previewButton}>
+                        {previewButton}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this._clickOk}>
+                    <Text style={styles.okButton}>
+                        {okButton}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
     _onFinish = (data) => {
-        this.data.callback && this.data.callback(data);
+        this.props.callback && this.props.callback(data);
     };
 
     _onDeletePageFinish = (data) => {
@@ -27,7 +110,7 @@ export default class extends React.Component {
     };
 
     _clickBack = () => {
-        this.data.onBack && this.data.onBack(this.state.selectedItems);
+        this.props.onBack && this.props.onBack(this.state.selectedItems);
     };
 
     _clickCell = (itemuri) => {
@@ -37,8 +120,8 @@ export default class extends React.Component {
             this.setState({
                 selectedItems: [...selectedItems]
             });
-        } else if (this.state.selectedItems.length >= this.data.maxSize) {
-            Alert.alert('', '最大只能选择' + this.data.maxSize + '张照片');
+        } else if (this.state.selectedItems.length >= this.props.maxSize) {
+            Alert.alert('', '最大只能选择' + this.props.maxSize + '张照片');
         } else {
             this.setState({
                 selectedItems: [...this.state.selectedItems, itemuri]
@@ -61,107 +144,34 @@ export default class extends React.Component {
         }
     };
 
-    _renderNaviBar = () => {
-        return (
-            <NaviBar
-                title={this.data.groupName}
-                onLeft={this._clickBack}
-                rightElement='取消'
-                onRight={this._onFinish.bind(this, [])}
-                navigation={this.props.navigation}
-            />
-        );
+    _column = () => {
+        const {width, height} = Dimensions.get('window');
+        if (width < height) {
+            return 3;
+        } else {
+            const safeArea = getSafeAreaInset();
+            const edge = height * 1.0 / 3;
+            return parseInt((width - safeArea.left - safeArea.right) / edge);
+        }
     };
 
-    _renderItem = ({item, index}) => {
-        const edge = Dimensions.get('window').width / this.column - 2;
-        const isSelected = this.state.selectedItems.some(obj => obj.uri === item.uri);
-        const backgroundColor = isSelected ? '#e15151' : 'transparent';
-        const hasIcon = isSelected || this.state.selectedItems.length < this.data.maxSize;
-        return (
-            <TouchableOpacity onPress={this._clickCell.bind(this, item)}>
-                <View style={{padding: 1}}>
-                    <Image
-                        key={index}
-                        source={{uri: item.uri}}
-                        style={{width: edge, height: edge, overflow: 'hidden'}}
-                        resizeMode='cover'
-                    />
-                    {hasIcon && (
-                        <View style={styles.selectcontainer}>
-                            <View style={[styles.selecticon, {backgroundColor}]}>
-                                {isSelected && (
-                                    <Image
-                                        source={require('./images/check_box.png')}
-                                        style={styles.selectedicon}
-                                    />
-                                )}
-                            </View>
-                        </View>
-                    )}
-                </View>
-            </TouchableOpacity>
-        );
+    _onWindowChanged = () => {
+        this.forceUpdate();
     };
-
-    _renderListView = () => {
-        return (
-            <FlatList
-                style={styles.list}
-                renderItem={this._renderItem}
-                data={this.data.photos}
-                keyExtractor={item => item.uri}
-                numColumns={this.column}
-                extraData={this.state}
-            />
-        );
-    };
-
-    _renderBottomView = () => {
-        const previewButton = this.state.selectedItems.length > 0 ? '预览' : '';
-        const okButton = '确定 (' + this.state.selectedItems.length + '/' + this.data.maxSize + ')';
-        return (
-            <View style={styles.bottom}>
-                <TouchableOpacity onPress={this._clickPreview}>
-                    <Text style={styles.previewButton}>
-                        {previewButton}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this._clickOk}>
-                    <Text style={styles.okButton}>
-                        {okButton}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
-    render() {
-        return (
-            <View style={styles.view}>
-                {this._renderNaviBar()}
-                {this._renderListView()}
-                {this._renderBottomView()}
-            </View>
-        );
-    }
 }
 
 const styles = StyleSheet.create({
     view: {
         flex: 1,
         backgroundColor: 'white',
-        paddingBottom: getBottomSpace(),
+    },
+    safeView: {
+        flex: 1,
     },
     list: {
         flex: 1,
     },
-    selecttouch: {
-        position: 'absolute',
-        top: 4,
-        right: 4,
-    },
-    selectcontainer: {
+    selectView: {
         position: 'absolute',
         top: 4,
         right: 4,
@@ -170,7 +180,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
     },
-    selecticon: {
+    selectIcon: {
         marginTop: 2,
         marginRight: 2,
         width: 20,
@@ -183,7 +193,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'transparent',
     },
-    selectedicon: {
+    selectedIcon: {
         width: 13,
         height: 13,
     },

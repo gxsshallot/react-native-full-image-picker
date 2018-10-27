@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppRegistry, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppRegistry, ScrollView, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import * as ImagePicker from 'react-native-full-image-picker';
 import { InnerNaviBar } from 'react-native-pure-navigation-bar';
 
-class Example extends React.Component {
+class Example extends React.PureComponent {
     options = [
         {
             title: 'Camera - Single',
@@ -64,7 +64,7 @@ class Example extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <InnerNaviBar title={'Test'} leftElement={null} />
                 <ScrollView style={styles.container}>
                     {this.options.map(this._renderItem)}
@@ -72,7 +72,7 @@ class Example extends React.Component {
                         {JSON.stringify(this.state.dataArr)}
                     </Text>
                 </ScrollView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

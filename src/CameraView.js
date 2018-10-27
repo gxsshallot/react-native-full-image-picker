@@ -1,29 +1,178 @@
 import React from 'react';
 import { Alert, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import { STATUSBAR_HEIGHT } from 'react-native-pure-navigation-bar';
+import { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
 import PageKeys from './PageKeys';
-import PhotoPageTypes from './PageTypes';
 
-export default class extends React.Component {
+export default class extends React.PureComponent {
+    static defaultProps = {
+        maxSize: 1,
+        sideType: RNCamera.Constants.Type.back,
+        flashMode: RNCamera.Constants.FlashMode.off,
+    };
+
     constructor(props) {
         super(props);
-        this.data = props.screenProps;
-        this.maxSize = this.data.maxSize === undefined ? 1 : this.data.maxSize;
-        const type = this.data.sideType !== undefined ? this.data.sideType : RNCamera.Constants.Type.back;
-        const mode = this.data.flashMode !== undefined ? this.data.flashMode : RNCamera.Constants.FlashMode.off;
         this.state = {
             data: [],
             isPreview: false,
-            sidetype: type,
-            flashmode: mode,
+            sideType: this.props.sideType,
+            flashMode: this.props.flashMode,
             isRecording: false,
         };
     }
 
+    componentDidMount() {
+        Dimensions.addEventListener('change', this._onWindowChanged);
+    }
+
+    componentWillUnmount() {
+        Dimensions.removeEventListener('change', this._onWindowChanged);
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <StatusBar hidden={true} />
+                {!this.state.isPreview ? this._renderCameraView() : this._renderPreviewView()}
+                {this._renderTopView()}
+                {this._renderBottomView()}
+            </View>
+        );
+    }
+
+    _renderTopView = () => {
+        const safeArea = getSafeAreaInset();
+        const style = {
+            top: safeArea.top,
+            left: safeArea.left,
+            right: safeArea.right,
+        };
+        return (
+            <View style={[styles.top, style]}>
+                {this._renderTopButton(require('./images/flash_auto.png'), this._clickFlashMode)}
+                {this._renderTopButton(require('./images/switch_camera.png'), this._clickSwitchSide)}
+            </View>
+        );
+    };
+
+    _renderTopButton = (image, onPress) => {
+        return (
+            <TouchableOpacity onPress={onPress}>
+                <Image style={styles.topImage} source={image} />
+            </TouchableOpacity>
+        );
+    };
+
+    _renderCameraView = () => {
+        return (
+            <RNCamera
+                ref={cam => this.camera = cam}
+                type={this.state.sideType}
+                flashMode={this.state.flashMode}
+                style={styles.camera}
+                fixOrientation={true}
+            />
+        );
+    };
+
+    _renderPreviewView = () => {
+        const {width, height} = Dimensions.get('window');
+        const safeArea = getSafeAreaInset();
+        const style = {
+            flex: 1,
+            marginTop: safeArea.top + topHeight,
+            marginLeft: safeArea.left,
+            marginRight: safeArea.right,
+            marginBottom: safeArea.bottom + bottomHeight,
+            backgroundColor: 'black',
+        };
+        return (
+            <View style={{width, height}}>
+                {this.props.isVideo ? (
+                    <Video
+                        source={{uri: this.state.data[0]}}
+                        ref={(ref) => this.player = ref}
+                        style={style}
+                    />
+                ) : (
+                    <Image
+                        resizeMode='contain'
+                        style={style}
+                        source={{uri: this.state.data[0]}}
+                    />
+                )}
+            </View>
+        );
+    };
+
+    _renderBottomView = () => {
+        const safeArea = getSafeAreaInset();
+        const style = {
+            bottom: safeArea.bottom,
+            left: safeArea.left,
+            right: safeArea.right,
+        };
+        const isMulti = this.props.maxSize > 1;
+        const hasPhoto = this.state.data.length > 0;
+        const inPreview = this.state.isPreview;
+        const isRecording = this.state.isRecording;
+        const buttonName = this.props.isVideo ? '使用视频' : '使用照片';
+        return (
+            <View style={[styles.bottom, style]}>
+                {isMulti && hasPhoto ? this._renderPreviewButton() : !isRecording && this._renderBottomButton('取消', this._clickCancel)}
+                {!inPreview && this._renderTakePhotoButton()}
+                {isMulti ? hasPhoto && this._renderBottomButton('确定', this._clickOK) : inPreview && this._renderBottomButton(buttonName, this._clickOK)}
+            </View>
+        );
+    };
+    
+    _renderPreviewButton = () => {
+        const text = '' + this.state.data.length + '/' + this.props.maxSize;
+        return (
+            <TouchableOpacity onPress={this._clickPreview} style={styles.previewTouch}>
+                <View style={styles.previewView}>
+                    <Image
+                        style={styles.previewImage}
+                        source={{uri: this.state.data[this.state.data.length - 1]}}
+                    />
+                    <Text style={styles.previewText}>
+                        {text}
+                    </Text>
+                </View>
+            </TouchableOpacity>
+        );
+    };
+
+    _renderBottomButton = (text, onPress) => {
+        return (
+            <TouchableOpacity onPress={onPress} style={styles.buttonTouch}>
+                <Text style={styles.buttonText}>
+                    {text}
+                </Text>
+            </TouchableOpacity>
+        );
+    };
+
+    _renderTakePhotoButton = () => {
+        const safeArea = getSafeAreaInset();
+        const left = (Dimensions.get('window').width - safeArea.left - safeArea.right - 84) / 2;
+        const icon = this.state.isRecording ?
+            require('./images/video_recording.png') :
+            require('./images/shutter.png');
+        return (
+            <TouchableOpacity
+                onPress={this.props.isVideo ? this._clickRecordVideo : this._clickTakePicture}
+                style={[styles.takeView, {left}]}
+            >
+                <Image style={styles.takeImage} source={icon} />
+            </TouchableOpacity>
+        );
+    };
+
     _onFinish = (data) => {
-        this.data.callback && this.data.callback(data.map(uri => ({uri})));
+        this.props.callback && this.props.callback(data.map(uri => ({uri})));
     };
 
     _onDeletePageFinish = (data) => {
@@ -35,7 +184,7 @@ export default class extends React.Component {
     _clickTakePicture = async () => {
         if (this.camera) {
             const {uri: path} = await this.camera.takePictureAsync({
-                mirrorImage: this.state.sidetype === RNCamera.Constants.Type.front,
+                mirrorImage: this.state.sideType === RNCamera.Constants.Type.front,
                 fixOrientation: true,
                 forceUpOrientation: true,
             });
@@ -45,8 +194,8 @@ export default class extends React.Component {
                     newPath = newPath.substring(7);
                 }
             }
-            if (this.maxSize > 1) {
-                if (this.state.data.length >= this.maxSize) {
+            if (this.props.maxSize > 1) {
+                if (this.state.data.length >= this.props.maxSize) {
                     Alert.alert('', '可拍摄照片已达到上限');
                 } else {
                     this.setState({
@@ -91,10 +240,14 @@ export default class extends React.Component {
             });
     };
 
+    _clickOK = () => {
+        this._onFinish(this.state.data);
+    };
+
     _clickSwitchSide = () => {
-        const target = this.state.sidetype === RNCamera.Constants.Type.back
+        const target = this.state.sideType === RNCamera.Constants.Type.back
             ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back;
-        this.setState({sidetype: target});
+        this.setState({sideType: target});
     };
 
     _clickFlashMode = () => {
@@ -109,7 +262,7 @@ export default class extends React.Component {
     };
 
     _clickCancel = () => {
-        if (this.maxSize <= 1 && this.state.isPreview) {
+        if (this.props.maxSize <= 1 && this.state.isPreview) {
             this.setState({
                 data: [],
                 isPreview: false,
@@ -119,217 +272,62 @@ export default class extends React.Component {
         }
     };
 
-    _renderTopView = () => {
-        return (
-            <View style={styles.top}>
-                <TouchableOpacity onPress={this._clickFlashMode} style={styles.flashview}>
-                    <Image
-                        style={styles.flashimage}
-                        source={require('./images/flash_auto.png')}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this._clickSwitchSide} style={styles.cameraview}>
-                    <Image
-                        style={styles.cameraimage}
-                        source={require('./images/switch_camera.png')}
-                    />
-                </TouchableOpacity>
-            </View>
-        );
+    _onWindowChanged = () => {
+        this.forceUpdate();
     };
-
-    _renderPreviewButton = () => {
-        const text = '' + this.state.data.length + '/' + this.maxSize;
-        return (
-            <TouchableOpacity onPress={this._clickPreview} style={styles.previewtouch}>
-                <View style={styles.previewview}>
-                    <Image
-                        style={styles.previewimage}
-                        source={{uri: this.state.data[this.state.data.length - 1]}}
-                    />
-                    <Text style={styles.previewtext}>
-                        {text}
-                    </Text>
-                </View>
-            </TouchableOpacity>
-        );
-    };
-
-    _renderCancelButton = () => {
-        return (
-            <TouchableOpacity onPress={this._clickCancel} style={styles.buttontouch}>
-                <Text style={styles.buttontext}>
-                    取消
-                </Text>
-            </TouchableOpacity>
-        );
-    };
-
-    _renderOkButton = (text) => {
-        return (
-            <TouchableOpacity
-                onPress={() => this._onFinish(this.state.data)}
-                style={styles.buttontouch}
-            >
-                <Text style={styles.buttontext}>
-                    {text}
-                </Text>
-            </TouchableOpacity>
-        );
-    };
-
-    _renderTakePhotoButton = () => {
-        const left = (Dimensions.get('window').width - 84) / 2;
-        const {type} = this.data;
-        const btnIcon = this.state.isRecording ?
-            require('./images/video_recording.png') :
-            require('./images/shutter.png');
-        return (
-            <TouchableOpacity
-                onPress={type === PhotoPageTypes.video ? this._clickRecordVideo : this._clickTakePicture}
-                style={[styles.takephotoview, {left}]}
-            >
-                <Image
-                    style={styles.takephotoimage}
-                    source={btnIcon}
-                />
-            </TouchableOpacity>
-        );
-    };
-
-    _renderBottomView = () => {
-        const {type} = this.data;
-        const isMulti = this.maxSize > 1;
-        const hasPhoto = this.state.data.length > 0;
-        const inPreview = this.state.isPreview;
-        const isRecording = this.state.isRecording;
-        const previewBtnName = type === PhotoPageTypes.video ? '使用视频' : '使用照片';
-        return (
-            <View style={styles.bottom}>
-                {isMulti && hasPhoto ? this._renderPreviewButton() : !isRecording && this._renderCancelButton()}
-                {!inPreview && this._renderTakePhotoButton()}
-                {isMulti ? hasPhoto && this._renderOkButton('确定') : inPreview && this._renderOkButton(previewBtnName)}
-            </View>
-        );
-    };
-
-    _renderPreviewView = () => {
-        const {type} = this.data;
-        const {width, height} = Dimensions.get('window');
-        return (
-            <View style={{width, height}}>
-                {
-                    type === PhotoPageTypes.video ?
-                        <Video
-                            source={{uri: this.state.data[0]}}
-                            ref={(ref) => this.player = ref}
-                            style={{width, height, backgroundColor: 'black'}}
-                        /> :
-                        <Image
-                            resizeMode='contain'
-                            style={{width, height}}
-                            source={{uri: this.state.data[0]}}
-                        />
-                }
-            </View>
-        );
-    };
-
-    _renderCameraView = () => {
-        return (
-            <RNCamera
-                ref={cam => this.camera = cam}
-                type={this.state.sidetype}
-                flashMode={this.state.flashmode}
-                style={styles.preview}
-                fixOrientation={true}
-            />
-        );
-    };
-
-    render() {
-        const {width, height} = Dimensions.get('window');
-        return (
-            <View style={[styles.container, {width, height}]}>
-                <StatusBar
-                    backgroundColor="transparent"
-                    barStyle="light-content"
-                />
-                {!this.state.isPreview ? this._renderCameraView() : this._renderPreviewView()}
-                {this._renderTopView()}
-                {this._renderBottomView()}
-            </View>
-        );
-    }
 }
+
+const topHeight = 60;
+const bottomHeight = 84;
 
 const styles = StyleSheet.create({
     container: {
-        ...Platform.select({
-            android: {flex: 1},
-        }),
-        flexDirection: 'row',
+        flex: 1,
+        backgroundColor: 'black',
     },
     top: {
         position: 'absolute',
-        left: 0,
-        right: 0,
-        top: STATUSBAR_HEIGHT,
-        height: 60,
+        height: topHeight,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: 'transparent',
+        paddingHorizontal: 5,
     },
-    flashview: {
-        marginLeft: 5,
-    },
-    flashimage: {
+    topImage: {
         margin: 10,
         width: 27,
         height: 27,
     },
-    cameraview: {
-        marginRight: 5,
-    },
-    cameraimage: {
-        margin: 10,
-        width: 27,
-        height: 27,
-    },
-    preview: {
+    camera: {
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
     bottom: {
         position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
         height: 84,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: 'transparent',
     },
-    takephotoview: {
+    takeView: {
         position: 'absolute',
         top: 0,
         bottom: 0,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    takephotoimage: {
+    takeImage: {
         width: 64,
         height: 64,
         margin: 10,
     },
-    buttontouch: {
-        marginLeft: 5,
-        marginRight: 5,
+    buttonTouch: {
+        marginHorizontal: 5,
     },
-    buttontext: {
+    buttonText: {
         margin: 10,
         height: 44,
         lineHeight: 44,
@@ -337,19 +335,19 @@ const styles = StyleSheet.create({
         color: 'white',
         backgroundColor: 'transparent',
     },
-    previewtouch: {
+    previewTouch: {
         marginLeft: 15,
     },
-    previewview: {
+    previewView: {
         flexDirection: 'row',
         alignItems: 'center',
         height: 84,
     },
-    previewimage: {
+    previewImage: {
         width: 50,
         height: 50,
     },
-    previewtext: {
+    previewText: {
         fontSize: 16,
         marginLeft: 10,
         color: 'white',

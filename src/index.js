@@ -1,6 +1,6 @@
 import React from 'react';
 import RootSiblings from 'react-native-general-siblings';
-import PhotoPageType from './PageTypes';
+import PageKeys from './PageKeys';
 import PhotoModalPage from './PhotoModalPage';
 
 /**
@@ -11,24 +11,24 @@ import PhotoModalPage from './PhotoModalPage';
  * callback: (data: any[]) => void. Donot use Alert.
  */
 
-export const getCamera = (options) => showImagePicker(PhotoPageType.camera, options);
-export const getVideo = (options) => showImagePicker(PhotoPageType.video, options);
-export const getAlbum = (options) => showImagePicker(PhotoPageType.album, options);
+export const getCamera = (options) => showImagePicker(PageKeys.camera, {...options, isVideo: false});
+export const getVideo = (options) => showImagePicker(PageKeys.camera, {...options, isVideo: true});
+export const getAlbum = (options) => showImagePicker(PageKeys.album_list, options);
 
 let sibling = null;
 
-function showImagePicker(type, options) {
+function showImagePicker(initialRouteName, options) {
     if (sibling) {
         return null;
     }
     sibling = new RootSiblings(
         <PhotoModalPage
-            type={type}
+            initialRouteName={initialRouteName}
+            options={options}
             onDestroy={() => {
                 sibling && sibling.destroy();
                 sibling = null;
             }}
-            {...options}
         />
     );
 }

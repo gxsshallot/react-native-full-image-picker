@@ -1,38 +1,40 @@
 import React from 'react';
-import { CameraRoll, Image, ListView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import NaviBar from 'react-native-pure-navigation-bar';
+import { CameraRoll, Image, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import NaviBar, { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import PageKeys from './PageKeys';
 
-export default class extends React.Component {
+export default class extends React.PureComponent {
+    static defaultProps = {
+        maxSize: 1,
+    };
+    
     constructor(props) {
         super(props);
-        this.data = props.screenProps;
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             data: [],
             selectedItems: [],
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        Dimensions.addEventListener('change', this._onWindowChanged);
         CameraRoll.getPhotos({
             first: 1000000,
             groupTypes: Platform.OS === 'ios' ? 'All' : undefined,
             assetType: 'Photos'
         }).then(result => {
-            console.log(result);
             const arr = result.edges.map(item => item.node);
             if (arr.length === 0) {
                 return;
             }
-            const dict = [{}, ...arr].reduce((prv, cur) => {
-                if (typeof prv[cur.group_name] === 'undefined') {
+            const dict = arr.reduce((prv, cur) => {
+                if (!prv[cur.group_name]) {
                     prv[cur.group_name] = [cur.image];
                 } else {
                     prv[cur.group_name].push(cur.image);
                 }
                 return prv;
-            });
+            }, {});
             const data = Object.keys(dict)
                 .sort((a, b) => {
                     const rootIndex = 'Camera Roll';
@@ -49,37 +51,41 @@ export default class extends React.Component {
         });
     }
 
-    _onBackFromAlbum = (items) => {
-        this.setState({selectedItems: [...items]});
-    };
+    componentWillUnmount() {
+        Dimensions.removeEventListener('change', this._onWindowChanged);
+    }
 
-    _clickCancel = () => {
-        this.data.callback && this.data.callback([]);
-    };
-
-    _clickRow = (item) => {
-        this.props.navigation.navigate(PageKeys.album_view, {
-            ...this.data,
-            groupName: item.name,
-            photos: item.value,
-            selectedItems: this.state.selectedItems,
-            onBack: this._onBackFromAlbum,
-        });
-    };
-
-    _renderNaviBar = () => {
+    render() {
+        const safeArea = getSafeAreaInset();
+        const style = {
+            paddingLeft: safeArea.left,
+            paddingRight: safeArea.right,
+            paddingBottom: safeArea.bottom,
+        };
         return (
-            <NaviBar
-                leftElement={[]}
-                rightElement={'取消'}
-                onRight={this._clickCancel}
-                title='选择照片'
-            />
+            <View style={styles.view}>
+                <NaviBar
+                    title={'选择照片'}
+                    leftElement={[]}
+                    rightElement={'取消'}
+                    onRight={this._clickCancel}
+                />
+                <FlatList
+                    style={[styles.listView, style]}
+                    data={this.state.data}
+                    renderItem={this._renderItem}
+                    keyExtractor={(item) => item.name}
+                    extraData={this.state}
+                />
+            </View>
         );
-    };
+    }
 
-    _renderRow = (item) => {
-        const selectedCount = item.value.filter(path => this.state.selectedItems.map(item => item.uri).indexOf(path.uri) >= 0).length;
+    _renderItem = ({item}) => {
+        const itemUris = new Set(item.value.map(i => i.uri));
+        const selectedItems = this.state.selectedItems
+            .filter(i => itemUris.has(i.uri));
+        const selectedCount = selectedItems.length;
         return (
             <TouchableOpacity onPress={this._clickRow.bind(this, item)}>
                 <View style={styles.cell}>
@@ -109,20 +115,27 @@ export default class extends React.Component {
         );
     };
 
-    render() {
-        return (
-            <View style={styles.view}>
-                {this._renderNaviBar()}
-                <ListView
-                    style={styles.listview}
-                    automaticallyAdjustContentInsets={false}
-                    dataSource={this.ds.cloneWithRows(this.state.data)}
-                    enableEmptySections={true}
-                    renderRow={this._renderRow}
-                />
-            </View>
-        );
-    }
+    _onBackFromAlbum = (items) => {
+        this.setState({selectedItems: [...items]});
+    };
+
+    _clickCancel = () => {
+        this.props.callback && this.props.callback([]);
+    };
+
+    _clickRow = (item) => {
+        this.props.navigation.navigate(PageKeys.album_view, {
+            ...this.props,
+            groupName: item.name,
+            photos: item.value,
+            selectedItems: this.state.selectedItems,
+            onBack: this._onBackFromAlbum,
+        });
+    };
+
+    _onWindowChanged = () => {
+        this.forceUpdate();
+    };
 }
 
 const styles = StyleSheet.create({
@@ -130,7 +143,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
     },
-    listview: {
+    safeView: {
+        flex: 1,
+    },
+    listView: {
         flex: 1,
     },
     cell: {

@@ -1,30 +1,76 @@
 import React from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, View, Dimensions } from 'react-native';
-import NaviBar, { TOTALBAR_HEIGHT } from 'react-native-pure-navigation-bar';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
+import NaviBar, { NAVBAR_HEIGHT, getSafeAreaInset } from 'react-native-pure-navigation-bar';
 
-export default class extends React.Component {
+export default class extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.data = props.navigation.state.params;
         this.state = {
-            images: this.data.images,
+            images: this.props.images,
             index: 0,
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.data = nextProps.navigation.state.params;
-        this.setState({
-            images: this.data.images,
-            index: 0,
-        });
+    componentDidMount() {
+        Dimensions.addEventListener('change', this._onWindowChanged);
     }
 
-    _onScroll = (event) => {
-        const screenWidth = Dimensions.get('window').width;
-        const offsetX = event.nativeEvent.contentOffset.x;
-        const index = Math.floor(offsetX / screenWidth);
+    componentWillUnmount() {
+        Dimensions.removeEventListener('change', this._onWindowChanged);
+    }
+
+    render() {
+        const title = '' + (this.state.index + 1) + '/' + this.state.images.length;
+        const safeArea = getSafeAreaInset();
+        const style = {
+            paddingLeft: safeArea.left,
+            paddingRight: safeArea.right,
+            paddingBottom: safeArea.bottom,
+            backgroundColor: 'black',
+        };
+        return (
+            <View style={styles.view}>
+                <StatusBar hidden={false} />
+                <NaviBar
+                    title={title}
+                    onLeft={() => this._clickLeft(this.state.images)}
+                    rightElement={'删除'}
+                    onRight={this._clickDelete}
+                />
+                <ScrollView
+                    style={[styles.scrollView, style]}
+                    automaticallyAdjustContentInsets={false}
+                    pagingEnabled={true}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={this._onScroll}
+                >
+                    {this.state.images.map(this._renderItem)}
+                </ScrollView>
+            </View>
+        );
+    }
+
+    _renderItem = (path, index) => {
+        const safeArea = getSafeAreaInset();
+        const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+        const width = screenWidth - safeArea.left - safeArea.right;
+        const height = screenHeight - safeArea.top - safeArea.bottom - NAVBAR_HEIGHT;
+        return (
+            <View key={index} style={{width, height}}>
+                <Image
+                    resizeMode='contain'
+                    style={{width, height}}
+                    source={{uri: path}}
+                />
+            </View>
+        );
+    };
+
+    _onScroll = ({nativeEvent: {contentOffset: {x}}}) => {
+        const safeArea = getSafeAreaInset();
+        const width = Dimensions.get('window').width - safeArea.left - safeArea.right;
+        const index = Math.floor(x / width);
         if (index < 0 || index >= this.state.images.length) {
             return;
         }
@@ -34,7 +80,7 @@ export default class extends React.Component {
     };
 
     _clickLeft = (images) => {
-        this.data.callback && this.data.callback(images);
+        this.props.callback && this.props.callback(images);
     };
 
     _clickDelete = () => {
@@ -52,59 +98,21 @@ export default class extends React.Component {
         }
     };
 
-    _renderItem = (path, index) => {
-        const width = Dimensions.get('window').width;
-        const height = Dimensions.get('window').height - TOTALBAR_HEIGHT - getBottomSpace();
-        return (
-            <View key={index} style={{width, height, backgroundColor: 'black'}}>
-                <Image
-                    resizeMode='contain'
-                    style={[styles.image, {width, height}]}
-                    source={{uri: path}}
-                />
-            </View>
-        );
+    _onWindowChanged = () => {
+        this.forceUpdate();
     };
-
-    render() {
-        const width = Dimensions.get('window').width;
-        const height = Dimensions.get('window').height - getBottomSpace();
-        const title = '' + (this.state.index + 1) + '/' + this.state.images.length;
-        return (
-            <View style={{width, height}}>
-                <StatusBar
-                    backgroundColor="transparent"
-                    barStyle="dark-content"
-                />
-                <NaviBar
-                    title={title}
-                    onLeft={() => this._clickLeft(this.state.images)}
-                    rightElement='删除'
-                    onRight={this._clickDelete}
-                    navigation={this.props.navigation}
-                />
-                <ScrollView
-                    ref={v => this.scrollview = v}
-                    style={styles.scrollview}
-                    automaticallyAdjustContentInsets={false}
-                    pagingEnabled={true}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    onScroll={this._onScroll}
-                >
-                    {this.state.images.map(this._renderItem)}
-                </ScrollView>
-            </View>
-        );
-    }
 }
 
 const styles = StyleSheet.create({
-    scrollview: {
+    view: {
         flex: 1,
-        flexDirection: 'row',
+    },
+    safeView: {
+        flex: 1,
         backgroundColor: 'black',
     },
-    image: {
+    scrollView: {
+        flex: 1,
+        flexDirection: 'row',
     },
 });
