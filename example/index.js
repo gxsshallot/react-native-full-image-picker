@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppRegistry, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'react-native-full-image-picker';
-import NaviBar from 'react-native-pure-navigation-bar';
+import { InnerNaviBar } from 'react-native-pure-navigation-bar';
 
 class Example extends React.Component {
     options = [
@@ -65,7 +65,7 @@ class Example extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <NaviBar title={'Test'} leftElement={null} />
+                <InnerNaviBar title={'Test'} leftElement={null} />
                 <ScrollView style={styles.container}>
                     {this.options.map(this._renderItem)}
                     <Text numberOfLines={0} style={styles.ans}>

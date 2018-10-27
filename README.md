@@ -1,10 +1,62 @@
 # react-native-full-image-picker
 
-[Chinese README](README-zh_CN.md)
-
-[ScreenShots](resource/ScreenShot.md)
+[![npm version](https://img.shields.io/npm/v/react-native-full-image-picker.svg?style=flat)](https://www.npmjs.com/package/react-native-full-image-picker)
 
 It is a React-Native UI component including a camera view and an album selection view. You can take photos, take video recording or select photo from photo library.
+
+## ScreenShots
+
+### iPhone 6 Plus
+
+<p float="left">
+
+<img src="/resource/Home-i.png" width="22%">
+
+<img src="/resource/Camera-Single-i.png" width="22%">
+
+<img src="/resource/Camera-Multi-i.png" width="22%">
+
+<img src="/resource/Preview-i.png" width="22%">
+
+</p>
+
+<p float="left">
+
+<img src="/resource/Album-List-i.png" width="22%">
+
+<img src="/resource/Album-Multi-i.png" width="22%">
+
+<img src="/resource/Video-i.png" width="22%">
+
+<img src="/resource/Video-Preview-i.png" width="22%">
+
+</p>
+
+### Android
+
+<p float="left">
+
+<img src="/resource/Home-A.jpg" width="22%">
+
+<img src="/resource/Camera-Single-A.jpg" width="22%">
+
+<img src="/resource/Camera-Multi-A.jpg" width="22%">
+
+<img src="/resource/Preview-A.jpg" width="22%">
+
+</p>
+
+<p float="left">
+
+<img src="/resource/Album-List-A.jpg" width="22%">
+
+<img src="/resource/Album-Multi-A.jpg" width="22%">
+
+<img src="/resource/Video-A.jpg" width="22%">
+
+<img src="/resource/Video-Preview-A.jpg" width="22%">
+
+</p>
 
 ## Install
 
