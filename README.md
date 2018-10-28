@@ -2,7 +2,18 @@
 
 [![npm version](https://img.shields.io/npm/v/react-native-full-image-picker.svg?style=flat)](https://www.npmjs.com/package/react-native-full-image-picker)
 
-It is a React-Native UI component including a camera view and an album selection view. You can take photos, take video recording or select photo from photo library.
+It is a react native UI component including a camera view and an album selection view. You can take photos, take video recording or select photo from photo library.
+
+It supports:
+
+* Take photos by camera.
+* Video recording.
+* Select photos from photo library.
+* Safe area for iPhone X.
+* Portrait and Landscape mode.
+* Multiple selection or capture mode.
+* Preview after capture or video recording.
+* Maximum count of photos.
 
 ## ScreenShots
 
