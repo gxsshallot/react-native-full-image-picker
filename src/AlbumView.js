@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import NaviBar, { getSafeAreaInset } from 'react-native-pure-navigation-bar';
+import * as RNFS from 'react-native-fs';
 import PageKeys from './PageKeys';
 
 export default class extends React.PureComponent {
@@ -100,7 +101,45 @@ export default class extends React.PureComponent {
     };
 
     _onFinish = (data) => {
-        this.props.callback && this.props.callback(data);
+        if (this.props.autoCopyCacheDir && Platform.OS === 'ios') {
+            const promises = data.map((item, index) => {
+                const {uri} = item;
+                const params = uri.split('?');
+                if (params.length < 1) {
+                    throw new Error('Unknown URI：' + uri);
+                }
+                const keyValues = params[1].split('&');
+                if (keyValues.length < 2) {
+                    throw new Error('Unknown URI：' + uri);
+                }
+                const kvMaps = keyValues.reduce((prv, cur) => {
+                    const kv = cur.split('=');
+                    prv[kv[0]] = kv[1];
+                    return prv;
+                }, {});
+                const itemId = kvMaps.id;
+                const ext = kvMaps.ext.toLowerCase();
+                const destPath = RNFS.CachesDirectoryPath + '/' + itemId + '.' + ext;
+                let promise;
+                if (item.type === 'ALAssetTypePhoto') {
+                    promise = RNFS.copyAssetsFileIOS(uri, destPath, 0, 0);
+                } else if (item.type === 'ALAssetTypeVideo') {
+                    promise = RNFS.copyAssetsVideoIOS(uri, destPath);
+                } else {
+                    throw new Error('Unknown URI：' + uri);
+                }
+                return promise
+                    .then((resultUri) => {
+                        data[index].uri = resultUri;
+                    });
+            });
+            Promise.all(promises)
+                .then(() => {
+                    this.props.callback && this.props.callback(data);
+                });
+        } else {
+            this.props.callback && this.props.callback(data);
+        }
     };
 
     _onDeletePageFinish = (data) => {

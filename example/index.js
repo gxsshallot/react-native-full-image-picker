@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry, ScrollView, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { AppRegistry, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'react-native-full-image-picker';
 import { InnerNaviBar } from 'react-native-pure-navigation-bar';
 
@@ -19,15 +19,57 @@ class Example extends React.PureComponent {
             },
         },
         {
-            title: 'Album - Single',
+            title: 'Image - Single',
             func: ImagePicker.getAlbum,
             options: {
             },
         },
         {
-            title: 'Album - MaxSize 9',
+            title: 'Image - MaxSize 9',
             func: ImagePicker.getAlbum,
             options: {
+                maxSize: 9,
+            },
+        },
+        {
+            title: 'Image - MaxSize 9 (AutoCopy)',
+            func: ImagePicker.getAlbum,
+            options: {
+                autoCopyCacheDir: true,
+                maxSize: 9,
+            },
+        },
+        {
+            title: 'Video - MaxSize 9',
+            func: ImagePicker.getAlbum,
+            options: {
+                assetType: 'Videos',
+                maxSize: 9,
+            },
+        },
+        {
+            title: 'Video - MaxSize 9 (AutoCopy)',
+            func: ImagePicker.getAlbum,
+            options: {
+                assetType: 'Videos',
+                autoCopyCacheDir: true,
+                maxSize: 9,
+            },
+        },
+        {
+            title: 'All - MaxSize 9',
+            func: ImagePicker.getAlbum,
+            options: {
+                assetType: 'All',
+                maxSize: 9,
+            },
+        },
+        {
+            title: 'All - MaxSize 9 (AutoCopy)',
+            func: ImagePicker.getAlbum,
+            options: {
+                assetType: 'All',
+                autoCopyCacheDir: true,
                 maxSize: 9,
             },
         },
@@ -64,7 +106,7 @@ class Example extends React.PureComponent {
 
     render() {
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <InnerNaviBar title={'Test'} leftElement={null} />
                 <ScrollView style={styles.container}>
                     {this.options.map(this._renderItem)}
@@ -72,7 +114,7 @@ class Example extends React.PureComponent {
                         {JSON.stringify(this.state.dataArr)}
                     </Text>
                 </ScrollView>
-            </SafeAreaView>
+            </View>
         );
     }
 }

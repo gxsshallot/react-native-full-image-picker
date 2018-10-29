@@ -6,6 +6,9 @@ import PageKeys from './PageKeys';
 export default class extends React.PureComponent {
     static defaultProps = {
         maxSize: 1,
+        autoCopyCacheDir: false,
+        assetType: 'Photos',
+        groupTypes: 'All',
     };
     
     constructor(props) {
@@ -20,18 +23,21 @@ export default class extends React.PureComponent {
         Dimensions.addEventListener('change', this._onWindowChanged);
         CameraRoll.getPhotos({
             first: 1000000,
-            groupTypes: Platform.OS === 'ios' ? 'All' : undefined,
-            assetType: 'Photos'
-        }).then(result => {
+            groupTypes: Platform.OS === 'ios' ? this.props.groupTypes : undefined,
+            assetType: this.props.assetType,
+        }).then((result) => {
             const arr = result.edges.map(item => item.node);
-            if (arr.length === 0) {
-                return;
-            }
             const dict = arr.reduce((prv, cur) => {
+                const curValue = {
+                    type: cur.type,
+                    location: cur.location,
+                    timestamp: cur.timestamp,
+                    ...cur.image,
+                };
                 if (!prv[cur.group_name]) {
-                    prv[cur.group_name] = [cur.image];
+                    prv[cur.group_name] = [curValue];
                 } else {
-                    prv[cur.group_name].push(cur.image);
+                    prv[cur.group_name].push(curValue);
                 }
                 return prv;
             }, {});

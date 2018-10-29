@@ -88,6 +88,7 @@ You should install these libraries:
 * [CameraRoll](https://facebook.github.io/react-native/docs/cameraroll)
 * [react-native-camera](https://github.com/react-native-community/react-native-camera)
 * [react-native-video](https://github.com/react-native-community/react-native-video)
+* [react-native-fs](https://github.com/itinance/react-native-fs)
 
 And make them available in iOS and Android.
 
