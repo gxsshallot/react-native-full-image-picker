@@ -9,6 +9,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import org.reactnative.camera.RNCameraPackage;
 import com.brentvatne.react.ReactVideoPackage;
+import com.rnfs.RNFSPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
           new RNCameraPackage(),
-          new ReactVideoPackage()
+          new ReactVideoPackage(),
+          new RNFSPackage()
       );
     }
 
