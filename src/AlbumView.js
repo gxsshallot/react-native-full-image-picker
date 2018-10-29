@@ -101,7 +101,7 @@ export default class extends React.PureComponent {
     };
 
     _onFinish = (data) => {
-        if (this.props.autoCopyCacheDir && Platform.OS === 'ios') {
+        if (this.props.autoConvertPath && Platform.OS === 'ios') {
             const promises = data.map((item, index) => {
                 const {uri} = item;
                 const params = uri.split('?');
@@ -137,10 +137,10 @@ export default class extends React.PureComponent {
                 .then(() => {
                     this.props.callback && this.props.callback(data);
                 });
-        } else if (this.props.autoCopyCacheDir && Platform.OS === 'android') {
-            const promises = data.map(({uri}, index) => {
-                return RNFS.stat(uri)
-                    .then(result => {
+        } else if (this.props.autoConvertPath && Platform.OS === 'android') {
+            const promises = data.map((item, index) => {
+                return RNFS.stat(item.uri)
+                    .then((result) => {
                         data[index].uri = result.originalFilepath;
                     });
             });

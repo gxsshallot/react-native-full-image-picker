@@ -32,10 +32,10 @@ class Example extends React.PureComponent {
             },
         },
         {
-            title: 'Image - MaxSize 9 (AutoCopy)',
+            title: 'Image - MaxSize 9 (AutoConvert)',
             func: ImagePicker.getAlbum,
             options: {
-                autoCopyCacheDir: true,
+                autoConvertPath: true,
                 maxSize: 9,
             },
         },
@@ -48,11 +48,11 @@ class Example extends React.PureComponent {
             },
         },
         {
-            title: 'Video - MaxSize 9 (AutoCopy)',
+            title: 'Video - MaxSize 9 (AutoConvert)',
             func: ImagePicker.getAlbum,
             options: {
                 assetType: 'Videos',
-                autoCopyCacheDir: true,
+                autoConvertPath: true,
                 maxSize: 9,
             },
         },
@@ -65,11 +65,11 @@ class Example extends React.PureComponent {
             },
         },
         {
-            title: 'All - MaxSize 9 (AutoCopy)',
+            title: 'All - MaxSize 9 (AutoConvert)',
             func: ImagePicker.getAlbum,
             options: {
                 assetType: 'All',
-                autoCopyCacheDir: true,
+                autoConvertPath: true,
                 maxSize: 9,
             },
         },
