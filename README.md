@@ -83,12 +83,13 @@ Install by NPM:
 npm install --save react-native-full-image-picker
 ```
 
-You should install these libraries:
+You should also install these libraries in your `package.json`:
 
 * [CameraRoll](https://facebook.github.io/react-native/docs/cameraroll)
 * [react-native-camera](https://github.com/react-native-community/react-native-camera)
 * [react-native-video](https://github.com/react-native-community/react-native-video)
 * [react-native-fs](https://github.com/itinance/react-native-fs)
+* [react-native-pure-navigation-bar](https://github.com/gaoxiaosong/react-native-pure-navigation-bar): Because some global navigation bar settings will be set, you should make this library only one instance.
 
 And make them available in iOS and Android.
 
