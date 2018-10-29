@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Alert, Dimensions, FlatList, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import NaviBar, { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import * as RNFS from 'react-native-fs';
 import PageKeys from './PageKeys';
@@ -131,6 +131,17 @@ export default class extends React.PureComponent {
                 return promise
                     .then((resultUri) => {
                         data[index].uri = resultUri;
+                    });
+            });
+            Promise.all(promises)
+                .then(() => {
+                    this.props.callback && this.props.callback(data);
+                });
+        } else if (this.props.autoCopyCacheDir && Platform.OS === 'android') {
+            const promises = data.map(({uri}, index) => {
+                return RNFS.stat(uri)
+                    .then(result => {
+                        data[index].uri = result.originalFilepath;
                     });
             });
             Promise.all(promises)
