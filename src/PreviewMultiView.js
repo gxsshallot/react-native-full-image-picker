@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, View, Dimensions } from 'react-native';
-import NaviBar, { NAVBAR_HEIGHT, getSafeAreaInset } from 'react-native-pure-navigation-bar';
+import NaviBar, { DEFAULT_NAVBAR_HEIGHT, getSafeAreaInset } from 'react-native-pure-navigation-bar';
 
 export default class extends React.PureComponent {
     constructor(props) {
@@ -55,7 +55,7 @@ export default class extends React.PureComponent {
         const safeArea = getSafeAreaInset();
         const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
         const width = screenWidth - safeArea.left - safeArea.right;
-        const height = screenHeight - safeArea.top - safeArea.bottom - NAVBAR_HEIGHT;
+        const height = screenHeight - safeArea.top - safeArea.bottom - DEFAULT_NAVBAR_HEIGHT;
         return (
             <View key={index} style={{width, height}}>
                 <Image
