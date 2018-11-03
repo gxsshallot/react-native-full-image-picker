@@ -1,5 +1,5 @@
 import React from 'react';
-import RootSiblings from 'react-native-general-siblings';
+import RootSiblings from 'react-native-root-siblings';
 import PageKeys from './PageKeys';
 import PhotoModalPage from './PhotoModalPage';
 import CameraView from './CameraView';

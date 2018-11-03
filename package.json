@@ -1,6 +1,6 @@
 {
     "name": "react-native-full-image-picker",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "private": false,
     "description": "Support taking photo, video recording or selecting from photo library.",
     "main": "src/index.js",
@@ -22,7 +22,7 @@
     },
     "homepage": "https://github.com/gaoxiaosong/react-native-full-image-picker#readme",
     "dependencies": {
-        "react-native-general-siblings": "^1.0.0"
+        "react-native-root-siblings": "^3.1.6"
     },
     "peerDependencies": {
         "react-native-camera": "*",

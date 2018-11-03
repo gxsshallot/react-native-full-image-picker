@@ -3882,25 +3882,21 @@ react-native-fs@^2.12.0:
     utf8 "^2.1.1"
 
 react-native-full-image-picker@../:
-  version "1.1.0"
+  version "1.2.0"
   dependencies:
-    react-native-camera "^1.3.1"
-    react-native-fs "^2.12.0"
-    react-native-general-siblings "^1.0.0"
-    react-native-pure-navigation-bar "^1.4.4"
-    react-native-video "^3.2.1"
-
-react-native-general-siblings@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/react-native-general-siblings/-/react-native-general-siblings-1.0.0.tgz#fe19d2fb589fd482bedcf5e725d3855060c7febd"
-  integrity sha512-V6aqrGnVBeUPwnMG56NwyUl8Nqwax1M8gbzINAWgnBnUAqj7wBb6jxvOmAdtsUyV7yMhz+bu1a3hiGZKw7hRyQ==
-  dependencies:
-    static-container "^1.0.0"
+    react-native-root-siblings "^3.1.6"
 
 react-native-pure-navigation-bar@^1.4.4:
   version "1.4.4"
   resolved "https://registry.npmjs.org/react-native-pure-navigation-bar/-/react-native-pure-navigation-bar-1.4.4.tgz#884670e2bb47e84d1ea7ef22466b13a91e0e0e88"
   integrity sha512-UhilgzVKDybnmQQieK/aNlQK1OJ8UvPtawyxFjvr3KjljPmEW3tQeY+VK2er86yz83JIs4kQOjlpiOgMs5C3CQ==
+
+react-native-root-siblings@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/react-native-root-siblings/-/react-native-root-siblings-3.1.6.tgz#31ed1e1baa1447483b6c2d4dd95616d5a3003ab2"
+  integrity sha512-7LcrqoZTDPpLjp0KWnhQMLKHqLnK9S3+SQ3q53xj7r8cYOGJ9O8Mxk9Ie5Oj17qTOrS7do5knfpPXIEGNfgpgA==
+  dependencies:
+    static-container "^1.0.0"
 
 react-native-safe-area-view@0.11.0:
   version "0.11.0"
