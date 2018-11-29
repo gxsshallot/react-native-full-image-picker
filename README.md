@@ -17,57 +17,15 @@ It supports:
 
 ## ScreenShots
 
-### iPhone 6 Plus
-
 <p float="left">
 
-<img src="/resource/Home-i.png" width="22%">
+<img src="/resource/camera.gif" width="25%">
 
-<img src="/resource/Camera-Single-i.png" width="22%">
-
-<img src="/resource/Camera-Multi-i.png" width="22%">
-
-<img src="/resource/Preview-i.png" width="22%">
+<img src="/resource/album.gif" width="25%">
 
 </p>
 
-<p float="left">
-
-<img src="/resource/Album-List-i.png" width="22%">
-
-<img src="/resource/Album-Multi-i.png" width="22%">
-
-<img src="/resource/Video-i.png" width="22%">
-
-<img src="/resource/Video-Preview-i.png" width="22%">
-
-</p>
-
-### Android
-
-<p float="left">
-
-<img src="/resource/Home-A.jpg" width="22%">
-
-<img src="/resource/Camera-Single-A.jpg" width="22%">
-
-<img src="/resource/Camera-Multi-A.jpg" width="22%">
-
-<img src="/resource/Preview-A.jpg" width="22%">
-
-</p>
-
-<p float="left">
-
-<img src="/resource/Album-List-A.jpg" width="22%">
-
-<img src="/resource/Album-Multi-A.jpg" width="22%">
-
-<img src="/resource/Video-A.jpg" width="22%">
-
-<img src="/resource/Video-Preview-A.jpg" width="22%">
-
-</p>
+Same UI on Android.
 
 ## Install
 
