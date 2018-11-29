@@ -69,6 +69,8 @@ It has three method:
 * `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
 * `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
 
+You can use [react-native-general-actionsheet](https://github.com/gaoxiaosong/react-native-general-actionsheet) to show `ActionSheet` by same API and UI with `ActionSheetIOS`.
+
 ## Change Label
 
 You can import page and change `defaultProps` to modify labels globally:
