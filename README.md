@@ -68,3 +68,16 @@ It has three method:
 * `maxSize?: number`: The maximum number of photo count. Valid in camera or video.
 * `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
 * `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
+
+## Change Label
+
+You can import page and change `defaultProps` to modify labels globally:
+
+```jsx
+import * as ImagePicker from 'react-native-full-image-picker';
+
+ImagePicker.XXXPage.defaultProps.xxx = yyy;
+ImagePicker.XXXView.defaultProps.xxx = yyy;
+```
+
+The `XXXPage` or `XXXView` is the export items of library. And you can see source code to modify its `defaultProps` value.
