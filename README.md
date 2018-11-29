@@ -2,6 +2,8 @@
 
 [![npm version](https://img.shields.io/npm/v/react-native-full-image-picker.svg?style=flat)](https://www.npmjs.com/package/react-native-full-image-picker)
 
+[中文说明](https://www.jianshu.com/p/4f7296753013)
+
 It is a react native UI component including a camera view and an album selection view. You can take photos, take video recording or select photo from photo library.
 
 It supports:
@@ -65,7 +67,7 @@ It has three method:
 `options` is a object with these settings:
 
 * `callback: (data: any[]) => void`: Callback method with photo or video array. Do not use `Alert` in it.
-* `maxSize?: number`: The maximum number of photo count. Valid in camera or video.
+* `maxSize?: number`: The maximum number of photo count. Valid in camera or photo library.
 * `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
 * `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
 
