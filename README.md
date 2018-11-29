@@ -110,14 +110,3 @@ It has three method:
 * `maxSize?: number`: The maximum number of photo count. Valid in camera or video.
 * `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
 * `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
-
-## Example Project
-
-You can open the example project by following steps:
-
-1. `cd example`.
-1. Use `yarn` or `npm install` to install the modules.
-1. Run `npm run bundle:ios` or `npm run bundle:android` to bundle the package.
-1. Run `npm start` in a seperate terminal.
-1. For iOS, you should run `pod install` in `ios` directory.
-1. Run the project.
