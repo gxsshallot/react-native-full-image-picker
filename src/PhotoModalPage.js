@@ -18,6 +18,7 @@ export default class extends React.PureComponent {
         choosePhotoTitle: 'Choose Photo',
         maxSizeChooseAlert: (number) => 'You can only choose ' + number + ' photos at most',
         maxSizeTakeAlert: (number) => 'You can only take ' + number + ' photos at most',
+        supportedOrientations: ['portrait', 'landscape'],
     };
 
     componentDidMount() {
@@ -74,7 +75,7 @@ export default class extends React.PureComponent {
         return (
             <Modal
                 animationType={'slide'}
-                supportedOrientations={['portrait', 'landscape']}
+                supportedOrientations={this.props.supportedOrientations}
             >
                 <NavigationDoor />
             </Modal>

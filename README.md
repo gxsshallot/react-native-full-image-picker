@@ -101,6 +101,7 @@ This is the outter navigator for all modes. You can change these properties of `
 | choosePhotoTitle | string | ChoosePhoto page title |
 | maxSizeChooseAlert | (num: number) => string | Max size limit alert message when choosing photos |
 | maxSizeTakeAlert | (num: number) => string | Max size limit alert message when taking photos from camera |
+| supportedOrientations | string[] | Supported orientations. Default is landscape and portrait |
 
 ### CameraView
 
