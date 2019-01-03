@@ -72,6 +72,7 @@ export default class extends React.PureComponent {
                 type={this.state.sideType}
                 flashMode={this.state.flashMode}
                 style={styles.camera}
+                captureAudio={true}
                 fixOrientation={true}
             />
         );
