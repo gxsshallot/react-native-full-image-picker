@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Alert, Dimensions, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
@@ -93,7 +93,7 @@ export default class extends React.PureComponent {
             <View style={{width, height}}>
                 {this.props.isVideo ? (
                     <Video
-                        source={{uri: this.state.data[0]}}
+                        source={{uri: this.state.data[0].uri}}
                         ref={(ref) => this.player = ref}
                         style={style}
                     />
@@ -101,7 +101,7 @@ export default class extends React.PureComponent {
                     <Image
                         resizeMode='contain'
                         style={style}
-                        source={{uri: this.state.data[0]}}
+                        source={{uri: this.state.data[0].uri}}
                     />
                 )}
             </View>
@@ -128,7 +128,7 @@ export default class extends React.PureComponent {
             </View>
         );
     };
-    
+
     _renderPreviewButton = () => {
         const text = '' + this.state.data.length + '/' + this.props.maxSize;
         return (
@@ -136,7 +136,7 @@ export default class extends React.PureComponent {
                 <View style={styles.previewView}>
                     <Image
                         style={styles.previewImage}
-                        source={{uri: this.state.data[this.state.data.length - 1]}}
+                        source={{uri: this.state.data[this.state.data.length - 1].uri}}
                     />
                     <Text style={styles.previewText}>
                         {text}
@@ -173,7 +173,7 @@ export default class extends React.PureComponent {
     };
 
     _onFinish = (data) => {
-        this.props.callback && this.props.callback(data.map(uri => ({uri})));
+        this.props.callback && this.props.callback(data);
     };
 
     _onDeletePageFinish = (data) => {
@@ -184,15 +184,14 @@ export default class extends React.PureComponent {
 
     _clickTakePicture = async () => {
         if (this.camera) {
-            const {uri: path} = await this.camera.takePictureAsync({
+            const item = await this.camera.takePictureAsync({
                 mirrorImage: this.state.sideType === RNCamera.Constants.Type.front,
                 fixOrientation: true,
                 forceUpOrientation: true,
             });
-            let newPath = path;
             if (Platform.OS === 'ios') {
-                if (newPath.startsWith('file://')) {
-                    newPath = newPath.substring(7);
+                if (item.uri.startsWith('file://')) {
+                    item.uri = item.uri.substring(7);
                 }
             }
             if (this.props.maxSize > 1) {
@@ -200,12 +199,12 @@ export default class extends React.PureComponent {
                     Alert.alert('', this.props.maxSizeTakeAlert(this.props.maxSize));
                 } else {
                     this.setState({
-                        data: [...this.state.data, newPath],
+                        data: [...this.state.data, item],
                     });
                 }
             } else {
                 this.setState({
-                    data: [newPath],
+                    data: [item],
                     isPreview: true,
                 });
             }
@@ -226,15 +225,14 @@ export default class extends React.PureComponent {
 
     _startRecording = () => {
         this.camera.recordAsync()
-            .then(({uri: path}) => {
-                let newPath = path;
+            .then((item) => {
                 if (Platform.OS === 'ios') {
-                    if (newPath.startsWith('file://')) {
-                        newPath = newPath.substring(7);
+                    if (item.uri.startsWith('file://')) {
+                        item.uri = item.uri.substring(7);
                     }
                 }
                 this.setState({
-                    data: [newPath],
+                    data: [item],
                     isRecording: false,
                     isPreview: true,
                 });
