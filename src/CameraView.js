@@ -10,7 +10,7 @@ export default class extends React.PureComponent {
         maxSize: 1,
         sideType: RNCamera.Constants.Type.back,
         flashMode: RNCamera.Constants.FlashMode.off,
-        VideoQuality: RNCamera.Constants.VideoQuality["1080p"]
+        videoQuality: RNCamera.Constants.VideoQuality["1080p"]
     };
 
     constructor(props) {
@@ -71,7 +71,7 @@ export default class extends React.PureComponent {
             <RNCamera
                 ref={cam => this.camera = cam}
                 type={this.state.sideType}
-                defaultVideoQuality={this.props.VideoQuality}
+                defaultVideoQuality={this.props.videoQuality}
                 flashMode={this.state.flashMode}
                 style={styles.camera}
                 captureAudio={true}
