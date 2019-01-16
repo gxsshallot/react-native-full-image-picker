@@ -10,6 +10,7 @@ export default class extends React.PureComponent {
         maxSize: 1,
         sideType: RNCamera.Constants.Type.back,
         flashMode: RNCamera.Constants.FlashMode.off,
+        VideoQuality: RNCamera.Constants.VideoQuality["1080p"]
     };
 
     constructor(props) {
@@ -70,6 +71,7 @@ export default class extends React.PureComponent {
             <RNCamera
                 ref={cam => this.camera = cam}
                 type={this.state.sideType}
+                defaultVideoQuality={this.props.VideoQuality}
                 flashMode={this.state.flashMode}
                 style={styles.camera}
                 captureAudio={true}
@@ -190,11 +192,11 @@ export default class extends React.PureComponent {
                 forceUpOrientation: true,
             });
             let newPath = path;
-            // if (Platform.OS === 'ios') {
-            //     if (newPath.startsWith('file://')) {
-            //         newPath = newPath.substring(7);
-            //     }
-            // }
+            if (Platform.OS === 'ios') {
+                if (newPath.startsWith('file://')) {
+                    newPath = newPath.substring(7);
+                }
+            }
             if (this.props.maxSize > 1) {
                 if (this.state.data.length >= this.props.maxSize) {
                     Alert.alert('', this.props.maxSizeTakeAlert(this.props.maxSize));
@@ -225,10 +227,7 @@ export default class extends React.PureComponent {
     };
 
     _startRecording = () => {
-        const options = {
-            quality: RNCamera.Constants.VideoQuality["1080p"]
-        };
-        this.camera.recordAsync(options)
+        this.camera.recordAsync()
             .then(({uri: path}) => {
                 let newPath = path;
                 if (Platform.OS === 'ios') {
