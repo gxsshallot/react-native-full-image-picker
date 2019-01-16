@@ -190,11 +190,11 @@ export default class extends React.PureComponent {
                 forceUpOrientation: true,
             });
             let newPath = path;
-            if (Platform.OS === 'ios') {
-                if (newPath.startsWith('file://')) {
-                    newPath = newPath.substring(7);
-                }
-            }
+            // if (Platform.OS === 'ios') {
+            //     if (newPath.startsWith('file://')) {
+            //         newPath = newPath.substring(7);
+            //     }
+            // }
             if (this.props.maxSize > 1) {
                 if (this.state.data.length >= this.props.maxSize) {
                     Alert.alert('', this.props.maxSizeTakeAlert(this.props.maxSize));
