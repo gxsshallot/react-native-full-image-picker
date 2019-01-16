@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import { RNCamera, Camera } from 'react-native-camera';
 import { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
 import PageKeys from './PageKeys';
@@ -225,7 +225,10 @@ export default class extends React.PureComponent {
     };
 
     _startRecording = () => {
-        this.camera.recordAsync()
+        const options = {
+            quality: RNCamera.Constants.VideoQuality["1080p"]
+        };
+        this.camera.recordAsync(options)
             .then(({uri: path}) => {
                 let newPath = path;
                 if (Platform.OS === 'ios') {
