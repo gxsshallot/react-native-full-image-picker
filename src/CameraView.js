@@ -5,12 +5,17 @@ import { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
 import PageKeys from './PageKeys';
 
+const flashModeOrder = {
+    off: 'on',
+    on: 'auto',
+    auto: 'off',
+};
 export default class extends React.PureComponent {
     static defaultProps = {
         maxSize: 1,
         sideType: RNCamera.Constants.Type.back,
-        flashMode: RNCamera.Constants.FlashMode.off,
-        videoQuality: RNCamera.Constants.VideoQuality["1080p"]
+        flashMode: 'auto',
+        videoQuality: RNCamera.Constants.VideoQuality["480p"]
     };
 
     constructor(props) {
@@ -50,9 +55,12 @@ export default class extends React.PureComponent {
             left: safeArea.left,
             right: safeArea.right,
         };
+        const {flashMode} = this.state;
+        const image = flashMode === 'auto' ? require('./images/flash_auto.png') : 
+            flashMode === 'on' ? require('./images/flash_open.png') : require('./images/flash_close.png');
         return (
             <View style={[styles.top, style]}>
-                {this._renderTopButton(require('./images/flash_auto.png'), this._clickFlashMode)}
+                {!this.props.isVideo && this._renderTopButton(image, this._clickFlashMode)}
                 {this._renderTopButton(require('./images/switch_camera.png'), this._clickSwitchSide)}
             </View>
         );
@@ -252,7 +260,9 @@ export default class extends React.PureComponent {
     };
 
     _clickFlashMode = () => {
-        // TODO FlashMode
+        this.setState({
+            flashMode: flashModeOrder[this.state.flashMode],
+        });
     };
 
     _clickPreview = () => {
