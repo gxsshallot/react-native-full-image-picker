@@ -5,21 +5,21 @@ import { getSafeAreaInset } from 'react-native-pure-navigation-bar';
 import Video from 'react-native-video';
 import PageKeys from './PageKeys';
 
-const flashModeOrder = {
-    off: 'on',
-    on: 'auto',
-    auto: 'off',
-};
 export default class extends React.PureComponent {
     static defaultProps = {
         maxSize: 1,
         sideType: RNCamera.Constants.Type.back,
-        flashMode: 'auto',
+        flashMode: 0,
         videoQuality: RNCamera.Constants.VideoQuality["480p"]
     };
 
     constructor(props) {
         super(props);
+        this.flashModes = [
+            RNCamera.Constants.FlashMode.auto,
+            RNCamera.Constants.FlashMode.off,
+            RNCamera.Constants.FlashMode.on,
+        ];
         this.state = {
             data: [],
             isPreview: false,
@@ -56,8 +56,17 @@ export default class extends React.PureComponent {
             right: safeArea.right,
         };
         const {flashMode} = this.state;
-        const image = flashMode === 'auto' ? require('./images/flash_auto.png') : 
-            flashMode === 'on' ? require('./images/flash_open.png') : require('./images/flash_close.png');
+        let image;
+        switch (flashMode) {
+            case 1:
+                image = require('./images/flash_close.png');
+                break;
+            case 2:
+                image = require('./images/flash_open.png');
+                break;
+            default:
+                image = require('./images/flash_auto.png');
+        }
         return (
             <View style={[styles.top, style]}>
                 {!this.props.isVideo && this._renderTopButton(image, this._clickFlashMode)}
@@ -80,7 +89,7 @@ export default class extends React.PureComponent {
                 ref={cam => this.camera = cam}
                 type={this.state.sideType}
                 defaultVideoQuality={this.props.videoQuality}
-                flashMode={this.state.flashMode}
+                flashMode={this.flashModes[this.state.flashMode]}
                 style={styles.camera}
                 captureAudio={true}
                 fixOrientation={true}
@@ -260,9 +269,8 @@ export default class extends React.PureComponent {
     };
 
     _clickFlashMode = () => {
-        this.setState({
-            flashMode: flashModeOrder[this.state.flashMode],
-        });
+        const newMode = (this.state.flashMode + 1) % this.flashModes.length;
+        this.setState({flashMode: newMode});
     };
 
     _clickPreview = () => {
