@@ -42,7 +42,7 @@ export default class extends React.PureComponent {
             <View style={styles.container}>
                 <StatusBar hidden={true} />
                 {!this.state.isPreview ? this._renderCameraView() : this._renderPreviewView()}
-                {this._renderTopView()}
+                {!this.state.isPreview && this._renderTopView()}
                 {this._renderBottomView()}
             </View>
         );
