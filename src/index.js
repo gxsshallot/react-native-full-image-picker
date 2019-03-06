@@ -12,6 +12,8 @@ import PreviewMultiView from './PreviewMultiView';
  * maxSize?: number. Camera or Video.
  * sideType?: RNCamera.Constants.Type. Camera or Video.
  * flashMode?: RNCamera.Constants.FlashMode. Camera or Video.
+ * pictureOptions?: RNCamera.PictureOptions. Camera.
+ * recordingOptions?: RNCamera.RecordingOptions Video.
  * callback: (data: any[]) => void. Donot use Alert.
  */
 
