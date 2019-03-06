@@ -70,6 +70,8 @@ It has three method:
 * `callback: (data: any[]) => void`: Callback method with photo or video array. `data` is an uri array of photo or video. Do not use `Alert` in this callback method.
 * `maxSize?: number`: The maximum number of photo count. Valid in camera or photo library mode.
 * `sideType?: RNCamera.Constants.Type`: Side of camera, back or front. Valid in camera or video.
+* `pictureOptions?: RNCamera.PictureOptions`: The options of RNCamera.takePictureAsync(PictureOptions)
+* `recordingOptions?: RNCamera.RecordingOptions`: The options of RNCamera.recordAsync(RecordingOptions)
 * `flashMode?: RNCamera.Constants.FlashMode`: Flash mode. Valid in camera or video.
 
 You can use [react-native-general-actionsheet](https://github.com/gaoxiaosong/react-native-general-actionsheet) to show `ActionSheet` by same API and UI with `ActionSheetIOS`.

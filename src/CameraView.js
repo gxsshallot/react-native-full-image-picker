@@ -10,7 +10,9 @@ export default class extends React.PureComponent {
         maxSize: 1,
         sideType: RNCamera.Constants.Type.back,
         flashMode: 0,
-        videoQuality: RNCamera.Constants.VideoQuality["480p"]
+        videoQuality: RNCamera.Constants.VideoQuality["480p"],
+        pictureOptions: {},
+        recordingOptions: {},
     };
 
     constructor(props) {
@@ -207,6 +209,7 @@ export default class extends React.PureComponent {
                 mirrorImage: this.state.sideType === RNCamera.Constants.Type.front,
                 fixOrientation: true,
                 forceUpOrientation: true,
+                ...this.props.pictureOptions
             });
             if (Platform.OS === 'ios') {
                 if (item.uri.startsWith('file://')) {
@@ -243,7 +246,7 @@ export default class extends React.PureComponent {
     };
 
     _startRecording = () => {
-        this.camera.recordAsync()
+        this.camera.recordAsync(this.props.recordingOptions)
             .then((item) => {
                 if (Platform.OS === 'ios') {
                     if (item.uri.startsWith('file://')) {
