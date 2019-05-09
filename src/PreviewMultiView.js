@@ -70,7 +70,7 @@ export default class extends React.PureComponent {
     _onScroll = ({nativeEvent: {contentOffset: {x}}}) => {
         const safeArea = getSafeAreaInset();
         const width = Dimensions.get('window').width - safeArea.left - safeArea.right;
-        const index = Math.floor(x / width);
+        const index = Math.round(x / width);
         if (index < 0 || index >= this.state.images.length) {
             return;
         }
