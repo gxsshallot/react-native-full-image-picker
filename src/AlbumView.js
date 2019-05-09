@@ -155,7 +155,7 @@ export default class extends React.PureComponent {
 
     _onDeletePageFinish = (data) => {
         const selectedItems = this.state.selectedItems
-            .filter(item => data.indexOf(item.uri) >= 0);
+            .filter(item => data.some(image => item.uri === image.uri));
         this.setState({selectedItems});
     };
 
@@ -183,7 +183,7 @@ export default class extends React.PureComponent {
         if (this.state.selectedItems.length > 0) {
             this.props.navigation.navigate(PageKeys.preview, {
                 ...this.props,
-                images: this.state.selectedItems.map(item => item.uri),
+                images: this.state.selectedItems,
                 callback: this._onDeletePageFinish,
             });
         }
